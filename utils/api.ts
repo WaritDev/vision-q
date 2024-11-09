@@ -89,3 +89,36 @@ export const tokenizeThai = async (text: string, options?: {
     throw error;
   }
 };
+// utils/api.ts
+export interface AudioCaptionResponse {
+  filename: string;
+  content_type: string;
+  prompt: string;
+  content: string[];
+  execute_time: string;
+  OK?: boolean;
+  errmsg?: string;
+}
+
+export const generateAudioCaption = async (
+  audioFile: File,
+  instruction: string = 'ถอดเสียงข้อความ'
+): Promise<AudioCaptionResponse> => {
+  const formData = new FormData();
+  formData.append('file', audioFile);
+  formData.append('instruction', instruction);
+
+  const response = await fetch('http://localhost:8000/generate-audio-caption', {
+    method: 'POST',
+    body: formData,
+  });
+
+  const data: AudioCaptionResponse = await response.json();
+
+  if (!response.ok || data.OK === false) {
+    throw new Error(data.errmsg || 'Failed to generate audio caption');
+  }
+
+  return data;
+};
+
