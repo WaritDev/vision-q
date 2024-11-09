@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import AnimateOnScroll from '../animations/AnimateOnScroll';
+import AnimateOnScroll from '../app/animations/AnimateOnScroll';
 
 const Concept = () => {
   return (

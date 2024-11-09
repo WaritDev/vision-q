@@ -1,4 +1,4 @@
-import AnimateOnScroll from '../animations/AnimateOnScroll';
+import AnimateOnScroll from '../app/animations/AnimateOnScroll';
 
 const Hero = () => {
   return (

@@ -1,9 +1,9 @@
-import Navbar from "./components/Navbar";
-import Apis from "./components/Apis";
-import Concept from "./components/Concept";
-import Footer from "./components/Footer";
-import Map from "./components/Map";
-import Hero from "./components/Hero";
+import Navbar from "../components/Navbar";
+import Apis from "../components/Apis";
+import Concept from "../components/Concept";
+import Footer from "../components/Footer";
+import Map from "../components/Map";
+import Hero from "../components/Hero";
 
 export default function Home() {
   return (

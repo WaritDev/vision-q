@@ -1,5 +1,5 @@
 import { SupermarketData } from './types';
-import AnimateOnScroll from '../animations/AnimateOnScroll';
+import AnimateOnScroll from '../app/animations/AnimateOnScroll';
 
 const supermarketData: SupermarketData[] = [
   {

@@ -1,40 +1,10 @@
-import { list } from "postcss";
-import React from "react";
+import ImageUpload from "@/components/ImageUpload";
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
-
-const UsersPage = async () => {
-  const res = await fetch("https://jsonplaceholder.typicode.com/users", {
-    cache: "no-store",
-  });
-  const users: User[] = await res.json();
-
+export default function Home() {
   return (
-    <>
-      <h1>Users</h1>
-      <p>{new Date().toLocaleTimeString()}</p>
-      <table className="table table-borderd">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user.id}>
-            <td>{user.name}</td>
-            <td>{user.email}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </>
+    <main className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Person Detection</h1>
+      <ImageUpload />
+    </main>
   );
-};
-
-export default UsersPage;
+}
