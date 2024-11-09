@@ -1,76 +1,51 @@
-import { SupermarketData } from './types';
+'use client';
+
+import React from 'react';
+import dynamic from 'next/dynamic';
 import AnimateOnScroll from '../app/animations/AnimateOnScroll';
 
-const supermarketData: SupermarketData[] = [
-  {
-    id: 1,
-    name: "แม็คโคร รังสิต",
-    durations: [20, 14, 20, 10, 14, 11, 12, 14, 9, 8]
-  },
-  {
-    id: 2,
-    name: "บิ๊ก รังสิต",
-    durations: [10, 12, 12, 12, 7, 9, 11, 13, "-", "-"]
-  },
-  {
-    id: 3,
-    name: "บิ๊กซี รังสิต 2",
-    durations: [9, 4, 14, 10, 4, 5, 7, 3, 9, 8]
-  },
-  {
-    id: 4,
-    name: "ท็อปส์ พลาซ่าเซอร์ รังสิต",
-    durations: [15, 5, 6, 9, 9, 5, 8, 14, 15, 17]
-  }
-];
-
 const Apis = () => {
+  const durationData = [
+    { id: 1, name: "เซ็นทรัล ลาดพร้าว", durations: [2, 7, 3, 5, 5, 6, 10, 12, 15, 16] },
+    { id: 2, name: "บิ๊ก ซี", durations: [15, 22, 18, 12, 7, 9, 11, 13, null, null] },
+    { id: 3, name: "โลตัส ลาดพร้าว", durations: [8, 6, 14, 10, 5, 8, 7, 3, 9, 8] },
+    { id: 4, name: "Food Land ลาดพร้าว", durations: [15, 18, 12, 8, 9, 7, 14, 16, 10, 12] }
+  ];
+
   return (
-    <section id="apis" className="py-20 bg-base-100">
+    <section id="apis" className="py-20 bg-base-200">
       <div className="container mx-auto px-4">
-        <AnimateOnScroll animation="slideUp">
-          <h2 className="text-4xl font-bold text-center mb-16">APIs Result</h2>
+        <AnimateOnScroll>
+          <h2 className="text-4xl font-bold text-center mb-16">
+            APIs Result
+          </h2>
         </AnimateOnScroll>
-        
+
         <AnimateOnScroll animation="scale" delay={0.2}>
           <div className="card bg-base-100 shadow-xl">
             <div className="card-body">
-              <div className="flex justify-between mb-4">
-                <div className="text-xl font-semibold">VisionQueue</div>
-                <div className="text-xl font-semibold">
-                  Duration predict (minutes)
-                </div>
-              </div>
               <div className="overflow-x-auto">
                 <table className="table w-full">
-                  <thead className="bg-black text-white">
+                  <thead>
                     <tr>
-                      <th className="px-4 py-3">ลำดับที่</th>
-                      <th className="px-4 py-3">ชื่อซุปเปอร์มาเก็ต</th>
-                      {Array.from({ length: 10 }, (_, i) => (
-                        <th key={i} className="px-4 py-3">
-                          ช่วงที่ {i + 1}
-                        </th>
+                      <th>ลำดับ</th>
+                      <th>ซูเปอร์มาร์เก็ต</th>
+                      {[...Array(10)].map((_, i) => (
+                        <th key={i}>ช่อง {i + 1}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
-                    {supermarketData.map((market, index) => (
-                      <AnimateOnScroll
-                        key={market.id}
-                        animation="slideRight"
-                        delay={0.1 * (index + 1)}
-                      >
-                        <tr>
-                          <td className="px-4 py-3">{market.id}.</td>
-                          <td className="px-4 py-3">{market.name}</td>
-                          {market.durations.map((duration, index) => (
-                            <td key={index} className="px-4 py-3">
-                              {duration}
-                            </td>
-                          ))}
-                        </tr>
-                      </AnimateOnScroll>
+                    {durationData.map((row) => (
+                      <tr key={row.id}>
+                        <td>{row.id}</td>
+                        <td>{row.name}</td>
+                        {row.durations.map((duration, index) => (
+                          <td key={index}>
+                            {duration !== null ? duration : '-'}
+                          </td>
+                        ))}
+                      </tr>
                     ))}
                   </tbody>
                 </table>
