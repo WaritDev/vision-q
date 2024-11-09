@@ -1,7 +1,6 @@
-// utils/api.ts
 import axios from 'axios';
 
-// Define a type for the response
+// Define a type for the Person Detection response
 interface PersonDetectionResponse {
   json_data: Array<{
     object: string;
@@ -11,6 +10,12 @@ interface PersonDetectionResponse {
     y1: number;
   }>;
   human_img?: string;
+}
+
+// Define a type for the Longan tokenization response
+interface LonganTokenizationResponse {
+  tokens: string[];
+  sentences?: string[];
 }
 
 // Function to call Person Detection API
@@ -33,8 +38,7 @@ export const detectPerson = async (imageFile: File): Promise<PersonDetectionResp
   return response.data;
 };
 
-
-// utils/api.ts
+// Function to call Caption Generation API
 export const generateCaption = async (imageFile: File): Promise<{ caption: string; ok: boolean; errmsg?: string }> => {
   const apiUrl = 'https://api.aiforthai.in.th/capgen';
   const apiKey = 'R6ywJHgqJSmnpcOezDrFUj21QlP2BIjf';
@@ -52,6 +56,36 @@ export const generateCaption = async (imageFile: File): Promise<{ caption: strin
     return response.data;
   } catch (error) {
     console.error("Capgen API request error:", error);
+    throw error;
+  }
+};
+
+// Function to call Longan Tokenization API
+export const tokenizeThai = async (text: string, options?: {
+  wordseg?: boolean;
+  sentseg?: boolean;
+  sep?: string;
+}): Promise<LonganTokenizationResponse> => {
+  const apiUrl = 'https://api.aiforthai.in.th/longan/tokenize';
+  const apiKey = 'R6ywJHgqJSmnpcOezDrFUj21QlP2BIjf';
+
+  const params = {
+    text,
+    wordseg: options?.wordseg ?? true,
+    sentseg: options?.sentseg ?? true,
+    sep: options?.sep ?? '|'
+  };
+
+  try {
+    const response = await axios.get(apiUrl, {
+      params,
+      headers: {
+        'Apikey': apiKey,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Longan API request error:", error);
     throw error;
   }
 };
