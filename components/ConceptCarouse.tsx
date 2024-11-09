@@ -31,7 +31,7 @@ const ConceptCard: React.FC<ConceptCardProps> = ({ title, description, imageSrc 
       <div className="md:w-3/5 p-6">
         <h3 className="text-2xl font-bold mb-4">{title}</h3>
         <p className="text-gray-600 text-lg">{description}</p>
-        <button className="mt-6 bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition duration-300">
+        <button className="mt-6 bg-[#8B7355] text-white px-6 py-2 rounded-full hover:bg-[#6B4423] transition duration-300">
           Learn More
         </button>
       </div>
