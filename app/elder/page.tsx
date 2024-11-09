@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Mic, Bell } from 'lucide-react';
 
-export default function ElderPage() {
-  const [isRecording, setIsRecording] = useState(false);
+const MODEL_NAME = "gemini-1.5-flash";
+const API_KEY = 'AIzaSyBY3FrOgqaaCFAFzE8dPvfV6Rv8opnowBU';
 
   const startRecording = () => {
     setIsRecording(true);

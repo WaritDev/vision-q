@@ -14,19 +14,51 @@ const CCTVPage = () => {
   const [image1Preview, setImage1Preview] = useState<string | null>(null);
   const [image2Preview, setImage2Preview] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [alertType, setAlertType] = useState<'none' | 'movement' | 'keyword' | 'both'>('none');
 
-  const createAlertData = (caption: string) => {
+  const createAlertData = (caption: string, alertType: 'none' | 'movement' | 'keyword' | 'both') => {
+    let title = "การแจ้งเตือน";
+    let priority = "normal";
+    let bgColor = "bg-blue-100";
+    let borderColor = "border-blue-500";
+    let textColor = "text-blue-800";
+  
+    switch (alertType) {
+      case 'movement':
+        title = "ตรวจพบการเคลื่อนไหวผิดปกติ";
+        priority = "high";
+        bgColor = "bg-yellow-100";
+        borderColor = "border-yellow-500";
+        textColor = "text-yellow-800";
+        break;
+      case 'keyword':
+        title = "ตรวจพบท่าทางที่อาจเป็นอันตราย";
+        priority = "medium";
+        bgColor = "bg-green-100";
+        borderColor = "border-green-500";
+        textColor = "text-green-800";
+        break;
+      case 'both':
+        title = "ตรวจพบการหกล้มหรือท่าทางผิดปกติ";
+        priority = "emergency";
+        bgColor = "bg-red-100";
+        borderColor = "border-red-500";
+        textColor = "text-red-800";
+        break;
+    }
+  
     return {
       id: Date.now(),
-      title: "การตรวจพบการหกล้ม",
-      description: caption || "ตรวจพบการหกล้ม กรุณาตรวจสอบโดยด่วน",
-      priority: "emergency",
+      title,
+      description: caption || "กรุณาตรวจสอบสถานการณ์",
+      priority,
       time: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + " น.",
-      bgColor: "bg-red-100",
-      borderColor: "border-red-500",
-      textColor: "text-red-800"
+      bgColor,
+      borderColor,
+      textColor
     };
   };
+
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, setImage: (file: File | null) => void, setPreview: (url: string | null) => void) => {
     const file = e.target.files?.[0];
@@ -40,12 +72,18 @@ const CCTVPage = () => {
     }
   };
 
+  const checkKeywords = (text: string): boolean => {
+    const keywords = ['นอน', 'นั่ง', 'ล้ม'];
+    return keywords.some(keyword => text.includes(keyword));
+  };
+
   const handleDetection = async () => {
     if (!image1 || !image2) return;
     
     setIsProcessing(true);
     setAlertMessage(null);
     setCaption(null);
+    setAlertType('none');
 
     try {
       const result1 = await detectPerson(image1);
@@ -65,35 +103,57 @@ const CCTVPage = () => {
         );
 
         const fallThreshold = 50;
+        const hasSignificantMovement = movement > fallThreshold;
 
-        if (movement > fallThreshold) {
-          setAlertMessage('ตรวจพบการเคลื่อนไหวผิดปกติ! อาจเกิดการหกล้ม');
+        const captionResult = await generateCaption(image2);
+        setCaption(captionResult.caption);
 
-          const captionResult = await generateCaption(image2);
-          if (captionResult.ok) {
-            setCaption(captionResult.caption);
-            // Create alert data and store in Local Storage
-            const alertData = createAlertData(captionResult.caption);
-            const existingAlerts = JSON.parse(localStorage.getItem('fallAlerts') || '[]');
-            existingAlerts.unshift(alertData);
-            localStorage.setItem('fallAlerts', JSON.stringify(existingAlerts));
-          } else {
-            setCaption('ไม่สามารถสร้างคำอธิบายภาพได้');
-            // Create alert data with default message
-            const alertData = createAlertData('ไม่สามารถสร้างคำอธิบายภาพได้');
-            const existingAlerts = JSON.parse(localStorage.getItem('fallAlerts') || '[]');
-            existingAlerts.unshift(alertData);
-            localStorage.setItem('fallAlerts', JSON.stringify(existingAlerts));
-          }
-        } else {
-          setAlertMessage('ไม่พบการเคลื่อนไหวผิดปกติ');
+        const hasKeywords = checkKeywords(captionResult.caption);
+        
+        // Determine alert type based on conditions
+        let newAlertType: 'none' | 'movement' | 'keyword' | 'both' = 'none';
+        let alertMessageText = 'ไม่พบความผิดปกติ';
+
+        if (hasSignificantMovement && hasKeywords) {
+          newAlertType = 'both';
+          alertMessageText = 'ตรวจพบการเคลื่อนไหวผิดปกติและท่าทางที่อาจเป็นอันตราย! กรุณาตรวจสอบโดยด่วน';
+        } else if (hasSignificantMovement) {
+          newAlertType = 'movement';
+          alertMessageText = 'ตรวจพบการเคลื่อนไหวผิดปกติ! โปรดตรวจสอบ';
+        } else if (hasKeywords) {
+          newAlertType = 'keyword';
+          alertMessageText = 'ตรวจพบท่าทางที่อาจเป็นอันตราย! โปรดตรวจสอบ';
+        }
+
+        setAlertType(newAlertType);
+        setAlertMessage(alertMessageText);
+
+        if (newAlertType !== 'none') {
+          const alertData = createAlertData(captionResult.caption, newAlertType);
+          const existingAlerts = JSON.parse(localStorage.getItem('fallAlerts') || '[]');
+          existingAlerts.unshift(alertData);
+          localStorage.setItem('fallAlerts', JSON.stringify(existingAlerts));
         }
       }
     } catch (error) {
       console.error('Error detecting person or generating caption:', error);
       setAlertMessage('เกิดข้อผิดพลาดในการประมวลผล');
+      setAlertType('none');
     } finally {
       setIsProcessing(false);
+    }
+  };
+
+  const getAlertStyles = (type: 'none' | 'movement' | 'keyword' | 'both') => {
+    switch (type) {
+      case 'movement':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'keyword':
+        return 'bg-green-100 text-green-800';
+      case 'both':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-blue-100 text-blue-800';
     }
   };
 
@@ -183,9 +243,7 @@ const CCTVPage = () => {
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-xl font-bold mb-4 text-[#6B4423]">ผลการตรวจจับ</h2>
               {alertMessage && (
-                <div className={`p-4 rounded-lg mb-4 ${
-                  alertMessage.includes('ผิดปกติ') ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
-                }`}>
+                <div className={`p-4 rounded-lg mb-4 ${getAlertStyles(alertType)}`}>
                   {alertMessage}
                 </div>
               )}
