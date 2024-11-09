@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import Map from "../components/Map";
 import Hero from "../components/Hero";
 import Display from "../components/Display"
+import RoleSelectionPopup from "@/components/RoleSelectionPopup";
 
 export default function Home() {
   return (
@@ -12,10 +13,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <Concept />
-      <Map />
-      <Apis />
-      <Display />
-      <Footer />
+      <RoleSelectionPopup />
     </div>
   );
 }
