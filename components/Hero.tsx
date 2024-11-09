@@ -7,8 +7,8 @@ const Hero = () => {
         <div className="max-w-md">
           <AnimateOnScroll animation="slideUp">
             <h1 className="text-5xl font-bold">
-              <span className="text-primary">Vision</span>
-              <span className="text-secondary">Queue</span>
+              <span className="text-primary">Elder</span>
+              <span className="text-secondary">Vision</span>
             </h1>
           </AnimateOnScroll>
           
