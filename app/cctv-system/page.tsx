@@ -1,6 +1,9 @@
+// \app\page.tsx
+
 "use client";
 import React, { useState } from 'react';
 import axios from 'axios';
+import { detectPerson, generateCaption } from '../../utils/api'; // Import the functions
 
 const PersonDetectionPage = () => {
   const [image1, setImage1] = useState<File | null>(null);
@@ -8,6 +11,7 @@ const PersonDetectionPage = () => {
   const [detectionResult1, setDetectionResult1] = useState<any>(null);
   const [detectionResult2, setDetectionResult2] = useState<any>(null);
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const [caption, setCaption] = useState<string | null>(null); // To store caption
 
   const handleImageUpload1 = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -25,6 +29,7 @@ const PersonDetectionPage = () => {
 
   const handleDetection = async () => {
     setAlertMessage(null);
+    setCaption(null);
 
     if (image1 && image2) {
       try {
@@ -48,33 +53,22 @@ const PersonDetectionPage = () => {
 
           if (movement > fallThreshold) {
             setAlertMessage('Warning: Significant movement detected! Possible fall.');
+            console.log('Debug - image2:', image2);
+
+            // Call generateCaption to analyze the second image
+            const captionResult = await generateCaption(image2);
+            if (captionResult.ok) {
+              setCaption(captionResult.caption);
+            } else {
+              setCaption('Error generating caption: ' + captionResult.caption);
+            }
           } else {
             setAlertMessage('No significant movement detected.');
           }
         }
       } catch (error) {
-        console.error('Error detecting person:', error);
+        console.error('Error detecting person or generating caption:', error);
       }
-    }
-  };
-
-  const detectPerson = async (image: File) => {
-    const formData = new FormData();
-    formData.append("src_img", image);
-    formData.append("json_export", "true");
-    formData.append("img_export", "true");
-
-    try {
-      const response = await axios.post("https://api.aiforthai.in.th/person/human_detect/", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "Apikey": "R6ywJHgqJSmnpcOezDrFUj21QlP2BIjf"
-        }
-      });
-      return response.data;
-    } catch (error) {
-      console.error("API request error:", error);
-      return null;
     }
   };
 
@@ -89,6 +83,7 @@ const PersonDetectionPage = () => {
         </button>
       </div>
       {alertMessage && <div style={{ color: 'red' }}>{alertMessage}</div>}
+      {caption && <div><strong>Caption:</strong> {caption}</div>}
       <div>
         {detectionResult1 && (
           <div>

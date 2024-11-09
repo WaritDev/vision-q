@@ -32,3 +32,26 @@ export const detectPerson = async (imageFile: File): Promise<PersonDetectionResp
 
   return response.data;
 };
+
+
+// utils/api.ts
+export const generateCaption = async (imageFile: File): Promise<{ caption: string; ok: boolean; errmsg?: string }> => {
+  const apiUrl = 'https://api.aiforthai.in.th/capgen';
+  const apiKey = 'R6ywJHgqJSmnpcOezDrFUj21QlP2BIjf';
+
+  const formData = new FormData();
+  formData.append('file', imageFile);
+
+  try {
+    const response = await axios.post(apiUrl, formData, {
+      headers: {
+        'Apikey': apiKey,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Capgen API request error:", error);
+    throw error;
+  }
+};
