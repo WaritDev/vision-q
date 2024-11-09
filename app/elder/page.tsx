@@ -4,7 +4,7 @@ import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/ge
 import { useState } from "react";
 
 const MODEL_NAME = "gemini-1.5-flash";
-const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY as string;
+const API_KEY = 'AIzaSyBY3FrOgqaaCFAFzE8dPvfV6Rv8opnowBU';
 
 export default function ElderChatbot() {
   const [response, setResponse] = useState<string>("");
