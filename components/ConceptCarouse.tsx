@@ -15,10 +15,10 @@ interface ConceptCardProps {
 }
 
 const ConceptCard: React.FC<ConceptCardProps> = ({ title, description, imageSrc }) => (
-  <div className="card bg-white shadow-xl overflow-hidden max-w-4xl mx-auto">
+  <div className="bg-white shadow-lg rounded-lg overflow-hidden max-w-4xl mx-auto my-8">
     <div className="flex flex-col md:flex-row">
-      <div className="md:w-2/5 p-6">
-        <figure className="relative h-64 rounded-lg overflow-hidden shadow-md">
+      <div className="md:w-2/5">
+        <div className="relative h-64 md:h-full">
           <Image
             src={imageSrc}
             alt={title}
@@ -26,18 +26,14 @@ const ConceptCard: React.FC<ConceptCardProps> = ({ title, description, imageSrc 
             objectFit="cover"
             className="transition-transform duration-300 hover:scale-105"
           />
-        </figure>
+        </div>
       </div>
       <div className="md:w-3/5 p-6">
-        <div className="card-body p-0">
-          <h3 className="card-title text-2xl font-semibold mb-4">{title}</h3>
-          <p className="text-lg font-light leading-relaxed text-gray-700">
-            {description}
-          </p>
-          <div className="card-actions justify-end mt-6">
-            <button className="btn btn-primary">Learn More</button>
-          </div>
-        </div>
+        <h3 className="text-2xl font-bold mb-4">{title}</h3>
+        <p className="text-gray-600 text-lg">{description}</p>
+        <button className="mt-6 bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition duration-300">
+          Learn More
+        </button>
       </div>
     </div>
   </div>
@@ -59,11 +55,13 @@ const ConceptCarousel: React.FC<ConceptCarouselProps> = ({ concepts }) => {
   };
 
   return (
-    <Slider {...settings}>
-      {concepts.map((concept, index) => (
-        <ConceptCard key={index} {...concept} />
-      ))}
-    </Slider>
+    <div className="relative pb-4">
+      <Slider {...settings}>
+        {concepts.map((concept, index) => (
+          <ConceptCard key={index} {...concept} />
+        ))}
+      </Slider>
+    </div>
   );
 };
 
