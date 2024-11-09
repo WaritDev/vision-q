@@ -3,7 +3,7 @@ import React from 'react';
 const Header: React.FC = () => {
   return (
     <div className="w-full bg-black py-4 px-6 flex justify-between items-center">
-      <span className="text-white text-2xl font-semibold">การแจ้งเตือน</span>
+      <span className="text-white text-2xl font-semibold">ElderVision</span>
       <button className="btn btn-ghost btn-circle">
         <div className="indicator">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -81,27 +81,34 @@ const MemberPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-[#F5F5F1]">
-      <div className="flex-none">
+    <div className="min-h-screen flex flex-col bg-[#F5F5F1]">
+      {/* Fixed Header */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
         <Header />
-        <VideoFeed />
       </div>
 
-      <div className="flex-grow overflow-y-auto">
-        <div className="container mx-auto px-4 py-4 max-w-md">
-          <div className="mb-4">
+      {/* Main Content with Padding for Header and Footer */}
+      <main className="flex-1 mt-[64px] mb-[60px] overflow-y-auto">
+        {/* Video Feed Section */}
+        <div className="mb-4">
+          <VideoFeed />
+        </div>
+
+        {/* Notifications Section */}
+        <div className="container mx-auto px-4 max-w-md">
+          <div className="mb-4 bg-white p-4 rounded-lg shadow">
             <input
               type="text"
               placeholder="หัวข้อการแจ้งเตือน"
               value={newNotification.title}
               onChange={(e) => setNewNotification({...newNotification, title: e.target.value})}
-              className="w-full p-2 mb-2 border rounded"
+              className="w-full p-2 mb-2 border rounded focus:outline-none focus:border-[#6B4423]"
             />
             <textarea
               placeholder="รายละเอียดการแจ้งเตือน"
               value={newNotification.description}
               onChange={(e) => setNewNotification({...newNotification, description: e.target.value})}
-              className="w-full p-2 mb-2 border rounded"
+              className="w-full p-2 mb-2 border rounded focus:outline-none focus:border-[#6B4423]"
             />
             <select
               value={newNotification.priority}
@@ -126,24 +133,32 @@ const MemberPage: React.FC = () => {
                 }
                 setNewNotification({...newNotification, priority, bgColor, borderColor, textColor});
               }}
-              className="w-full p-2 mb-2 border rounded"
+              className="w-full p-2 mb-2 border rounded focus:outline-none focus:border-[#6B4423]"
             >
               <option value="risk">มีความเสี่ยง</option>
               <option value="high-risk">ความเสี่ยงสูง</option>
               <option value="emergency">ฉุกเฉิน</option>
             </select>
-            <div 
+            <button
               onClick={handleAddNotification}
-              className="w-full p-2 text-center bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-600"
+              className="w-full bg-[#6B4423] text-white py-2 rounded hover:bg-[#8B6243] transition-colors duration-200"
             >
               เพิ่มการแจ้งเตือน
-            </div>
+            </button>
           </div>
-          <NotificationList notifications={notifications} onDelete={handleDeleteNotification} />
-        </div>
-      </div>
 
-      <FooterNavigation />
+          {/* Notification List */}
+          <NotificationList
+            notifications={notifications}
+            onDelete={handleDeleteNotification}
+          />
+        </div>
+      </main>
+
+      {/* Fixed Footer Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white shadow-md">
+        <FooterNavigation />
+      </div>
     </div>
   );
 };
