@@ -78,9 +78,9 @@ const CCTVPage = () => {
             existingAlerts.unshift(alertData);
             localStorage.setItem('fallAlerts', JSON.stringify(existingAlerts));
           } else {
-            setCaption('ไม่สามารถสร้างคำอธิบายภาพได้');
+            setCaption(captionResult.caption);
             // Create alert data with default message
-            const alertData = createAlertData('ไม่สามารถสร้างคำอธิบายภาพได้');
+            const alertData = createAlertData(captionResult.caption);
             const existingAlerts = JSON.parse(localStorage.getItem('fallAlerts') || '[]');
             existingAlerts.unshift(alertData);
             localStorage.setItem('fallAlerts', JSON.stringify(existingAlerts));
