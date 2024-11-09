@@ -3,18 +3,57 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { Mic, Bell } from 'lucide-react';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const MODEL_NAME = "gemini-1.5-flash";
 const API_KEY = 'AIzaSyBY3FrOgqaaCFAFzE8dPvfV6Rv8opnowBU';
 
+export default function ElderChatbot() {
+  const [isRecording, setIsRecording] = useState(false);
+  const [response, setResponse] = useState<string>("");
+  const [userInput, setUserInput] = useState<string>("");
+
   const startRecording = () => {
     setIsRecording(true);
-    // Here you would start the actual recording logic
   };
 
-  const stopRecording = () => {
+  const stopRecording = () => { 
     setIsRecording(false);
-    // Here you would stop the actual recording logic
+  };
+
+  const saveResponse = (text: string) => {
+    // ฟังก์ชันสำหรับบันทึกหรือจัดการข้อความ
+    console.log("Saving response:", text);
+    // คุณสามารถเพิ่มโค้ดเพื่อบันทึกลงฐานข้อมูลหรือทำอย่างอื่นได้ที่นี่
+  };
+
+  const handleChat = async (prompt: string) => {
+    const genAI = new GoogleGenerativeAI(API_KEY);
+    const model = genAI.getGenerativeModel({ model: MODEL_NAME });
+
+    const config = {
+      temperature: 0.9,
+      topK: 1,
+      topP: 1,
+      maxOutputTokens: 2048,
+    };
+
+    const chat = model.startChat({
+      generationConfig: config,
+      history: [{ role: "user", parts: [{ text: prompt }] }],
+    });
+
+    const result = await chat.sendMessage(prompt);
+    const reply = result.response.text(); // เก็บข้อความที่ตอบกลับมาในตัวแปร reply
+    setResponse(reply);
+    saveResponse(reply); // เรียกใช้ฟังก์ชัน saveResponse เพื่อทำอย่างอื่นกับข้อความที่ตอบกลับมา
+  };
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleChat(userInput);
+    setUserInput("");
+    
   };
 
   return (
@@ -24,7 +63,13 @@ const API_KEY = 'AIzaSyBY3FrOgqaaCFAFzE8dPvfV6Rv8opnowBU';
         <p className="text-lg text-gray-600">กดค้างปุ่มไมค์สีแดงเพื่อพูด</p>
       </div>
 
-      <div className="relative w-64 h-64">
+      {response && (
+        <div className="mt-4 bg-brown-400 text-white p-4 rounded shadow w-3/4 text-center">
+          <p>{response}</p>
+        </div>
+      )}
+
+      <div className="relative w-64 h-64 mt-4">
         <Image
           src="/images/family-ill.png"
           alt="Family Illustration"
@@ -33,7 +78,7 @@ const API_KEY = 'AIzaSyBY3FrOgqaaCFAFzE8dPvfV6Rv8opnowBU';
         />
       </div>
 
-      <div className="w-full flex flex-col items-center">
+      <div className="w-full flex flex-col items-center mt-4">
         <button
           onMouseDown={startRecording}
           onMouseUp={stopRecording}
@@ -48,13 +93,20 @@ const API_KEY = 'AIzaSyBY3FrOgqaaCFAFzE8dPvfV6Rv8opnowBU';
           <Mic size={80} className={`${isRecording ? 'animate-pulse' : ''}`} />
         </button>
 
-        {isRecording && (
-          <p className="text-xl font-semibold text-red-500 mb-4 animate-pulse">
-            ไมค์กำลังทำงาน...
-          </p>
-        )}
+        <form onSubmit={onSubmit} className="w-full max-w-lg">
+          <input
+            type="text"
+            value={userInput}
+            onChange={(e) => setUserInput(e.target.value)}
+            placeholder="พิมพ์ข้อความของคุณ..."
+            className="border p-2 w-full rounded mb-4"
+          />
+          <button type="submit" className="bg-blue-500 text-white p-2 rounded">
+            ส่งข้อความ
+          </button>
+        </form>
 
-        <div className="w-full flex justify-end">
+        <div className="w-full flex justify-end mt-4">
           <button className="p-2 bg-white rounded-full shadow">
             <Bell size={24} />
           </button>
