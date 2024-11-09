@@ -1,6 +1,6 @@
-import Navbar from "../components/Navbar";
-import Concept from "../components/Concept";
-import Hero from "../components/Hero";
+import Navbar from "@/components/Navbar";
+import Concept from "@/components/Concept";
+import Hero from "@/components/Hero";
 import RoleSelectionPopup from "@/components/RoleSelectionPopup";
 
 export default function Home() {
